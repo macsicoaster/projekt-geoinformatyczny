@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wynik wizualizacji - silesiaAIR</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Light Mode - Default */
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: #1f2937;
+        }
+        
+        body .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        body .app-title {
+            color: #1f2937;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body .app-subtitle {
+            color: #6b7280;
+        }
+        
+        body .nav-link {
+            color: #4b5563;
+        }
+        
+        body .nav-link:hover {
+            color: #3b82f6;
+        }
+        
+        body .result-header {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+        
+        body .result-title {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body .metadata-label {
+            color: #6b7280;
+        }
+        
+        body .metadata-value {
+            color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        body .visualization-section {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+        
+        body .image-wrapper {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+        
+        body .method-description {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+        
+        body .method-description h2 {
+            color: #1f2937;
+        }
+        
+        body .description-content {
+            color: #4b5563;
+            background: #f9fafb;
+            border-left-color: #3b82f6;
+        }
+        
+        body .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        
+        body .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+        
+        body .btn-secondary {
+            background: #f3f4f6;
+            color: #3b82f6;
+        }
+        
+        body .btn-secondary:hover {
+            background: #e5e7eb;
+            color: #2563eb;
+        }
+        
+        body .footer {
+            background: rgba(255, 255, 255, 0.95);
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        body .footer-content p {
+            color: #6b7280;
+        }
+        
+        /* Dark Mode */
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+            color: #e2e8f0;
+        }
+        
+        body.dark-mode .header {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom-color: #334155;
+        }
+        
+        body.dark-mode .app-title {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body.dark-mode .app-subtitle {
+            color: #94a3b8;
+        }
+        
+        body.dark-mode .nav-link {
+            color: #cbd5e1;
+        }
+        
+        body.dark-mode .nav-link:hover {
+            color: #6366f1;
+        }
+        
+        body.dark-mode .result-header {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #334155;
+        }
+        
+        body.dark-mode .result-title {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body.dark-mode .metadata-label {
+            color: #94a3b8;
+        }
+        
+        body.dark-mode .metadata-value {
+            color: #818cf8;
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        body.dark-mode .visualization-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #334155;
+        }
+        
+        body.dark-mode .image-wrapper {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: #475569;
+        }
+        
+        body.dark-mode .method-description {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #334155;
+        }
+        
+        body.dark-mode .method-description h2 {
+            color: #f1f5f9;
+        }
+        
+        body.dark-mode .description-content {
+            color: #cbd5e1;
+            background: rgba(15, 23, 42, 0.6);
+            border-left-color: #6366f1;
+        }
+        
+        body.dark-mode .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+        
+        body.dark-mode .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+        }
+        
+        body.dark-mode .btn-secondary {
+            background: rgba(100, 116, 139, 0.2);
+            color: #6366f1;
+        }
+        
+        body.dark-mode .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+        }
+        
+        body.dark-mode .footer {
+            background: rgba(15, 23, 42, 0.95);
+            border-top-color: #334155;
+        }
+        
+        body.dark-mode .footer-content p {
+            color: #94a3b8;
+        }
+        
+        body.dark-mode .error-message {
+            color: #f87171;
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: #e5e7eb;
+            border: 2px solid #d1d5db;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .theme-toggle:hover {
+            background: #d1d5db;
+            transform: rotate(180deg) scale(1.1);
+            border-color: #9ca3af;
+        }
+        
+        body.dark-mode .theme-toggle {
+            background: #334155;
+            border-color: #475569;
+        }
+        
+        body.dark-mode .theme-toggle:hover {
+            background: #475569;
+            border-color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo" class="logo" onerror="this.style.display='none'">
+                <div class="title-group">
+                    <h1 class="app-title">silesiaAIR</h1>
+                    <p class="app-subtitle">Wizualizacja danych geoprzestrzennych dla GZM</p>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="{{ url_for('index') }}" class="nav-link">Powrót</a>
+                <button id="themeToggle" class="theme-toggle" title="Przełącz motyw">
+                    <span id="themeIcon">🌙</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Result Header -->
+        <section class="result-header">
+            <div class="result-container">
+                <h1 class="result-title">Wynik Wizualizacji</h1>
+                <div class="result-metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-label">📅 Data:</span>
+                        <span class="metadata-value">{{ data }}</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">📊 Zmienna:</span>
+                        <span class="metadata-value">{{ zmienna }}</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">🎨 Metoda:</span>
+                        <span class="metadata-value">{{ metoda }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visualization Display -->
+        <section class="visualization-section">
+            <div class="visualization-container">
+                <div class="image-wrapper">
+                    <img id="visualizationImage" src="{{ obraz }}" alt="Wizualizacja danych" class="visualization-image">
+                </div>
+
+                <!-- Visualization Controls -->
+                <div class="visualization-controls">
+                    <button class="btn btn-primary" onclick="downloadImage()">
+                        <span class="btn-icon">⬇️</span>
+                        Pobierz obraz
+                    </button>
+                    <button class="btn btn-secondary" onclick="printImage()">
+                        <span class="btn-icon">🖨️</span>
+                        Drukuj
+                    </button>
+                    <button class="btn btn-secondary" onclick="shareImage()">
+                        <span class="btn-icon">📤</span>
+                        Udostępnij
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportImageAsFile()">
+                        <span class="btn-icon">💾</span>
+                        Eksportuj do pliku
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Method Description -->
+        <section class="method-description">
+            <div class="method-container">
+                <h2>Opis Metody</h2>
+                <div id="methodDesc" class="description-content">
+                    <!-- Dynamically filled by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Actions -->
+        <section class="actions-section">
+            <div class="actions-container">
+                <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                    <span class="btn-icon">🔄</span>
+                    Nowa wizualizacja
+                </a>
+                <button onclick="generatePDF()" class="btn btn-secondary btn-lg">
+                    <span class="btn-icon">📄</span>
+                    Wygeneruj raport PDF
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 silesiaAIR. Wizualizacja Danych Geoprzestrzennych dla GZM.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.textContent = '☀️';
+        }
+        
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Method descriptions
+        const methodDescriptions = {
+            'mapa': 'Mapa punktów wyświetla punkty pomiarowe bezpośrednio na mapie. Każdy punkt jest kolorowany zgodnie z wartością zmiennej. Metoda pozwala szybko zobaczyć rozkład przestrzenny mierzonego zjawiska.',
+            'idw': 'Metoda Inverse Distance Weighting (IDW) interpoluje wartości pomiędzy punktami pomiarowymi. Wartość w każdym punkcie siatki jest obliczana jako średnia ważona wartości w punktach pomiarowych, gdzie wagi są odwrotnie proporcjonalne do odległości.',
+            'kriging': 'Kriging to zaawansowana metoda geostatystyczna oparta na teorii funkcji losowych. Pozwala na interpolację danych uwzględniając strukturę przestrzenną zjawiska i zapewnia niepewność oszacowania.',
+            'wykres': 'Wykresy statystyczne prezentują rozkład wartości zmiennej. Wyświetlane są: histogram (wykres słupkowy), przebieg czasowy (wykres liniowy) i rozkład statystyczny (diagram pudełkowy).'
+        };
+
+        // Fill method description
+        const metoda = '{{ metoda }}';
+        document.getElementById('methodDesc').textContent = methodDescriptions[metoda] || 'Brak opisu dla tej metody.';
+
+        // Download image
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.href = '{{ obraz }}';
+            link.download = `wizualizacja_${new Date().toISOString().split('T')[0]}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Print image
+        function printImage() {
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>Drukowanie</title></head><body>');
+            printWindow.document.write('<h1>Wizualizacja danych</h1>');
+            printWindow.document.write('<p>Data: {{ data }} | Zmienna: {{ zmienna }} | Metoda: {{ metoda }}</p>');
+            printWindow.document.write('<img src="{{ obraz }}" style="max-width:100%; height:auto;">');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Share image (uses Web Share API if available)
+        function shareImage() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Wizualizacja danych GeoViz',
+                    text: `Wizualizacja dla daty {{ data }}, zmiennej {{ zmienna }} metodą {{ metoda }}`,
+                    url: window.location.href
+                }).catch(err => console.log('Błąd przy udostępnianiu:', err));
+            } else {
+                alert('Twoja przeglądarka nie obsługuje funkcji udostępniania');
+            }
+        }
+
+        // Export image as file
+        function exportImageAsFile() {
+            const link = document.createElement('a');
+            link.href = '{{ obraz }}';
+            link.download = `geoviz_${new Date().getTime()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert('✅ Obraz został pobrany');
+        }
+
+        // Generate PDF report
+        function generatePDF() {
+            const data = {
+                data: '{{ data }}',
+                zmienna: '{{ zmienna }}',
+                metoda: '{{ metoda }}'
+            };
+            
+            // Wyślij żądanie do serwera
+            fetch('/generuj_pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    // Pobierz plik PDF
+                    window.location.href = result.download_url;
+                    alert('Raport PDF został wygenerowany i pobrany!');
+                } else {
+                    alert('Błąd: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                alert('Błąd podczas generowania PDF');
+            });
+        }
+
+        // Image loading indicator
+        document.getElementById('visualizationImage').addEventListener('load', function() {
+            this.classList.add('loaded');
+        });
+
+        document.getElementById('visualizationImage').addEventListener('error', function() {
+            this.parentElement.innerHTML = '<div class="error-message">Nie udało się wczytać obrazu. Spróbuj ponownie.</div>';
+        });
+    </script>
+</body>
+
+</html>

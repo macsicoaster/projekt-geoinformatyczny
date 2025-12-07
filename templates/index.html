@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wizualizacja danych geoprzestrzennych</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Light Mode - Default */
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: #1f2937;
+        }
+        
+        body .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid #e5e7eb;
+            backdrop-filter: blur(10px);
+        }
+        
+        body .app-title {
+            color: #1f2937;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body .app-subtitle {
+            color: #6b7280;
+        }
+        
+        body .nav-link {
+            color: #4b5563;
+        }
+        
+        body .nav-link:hover {
+            color: #3b82f6;
+        }
+        
+        body .nav-link.active {
+            color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        body .hero {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        body .hero-content h2 {
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: none;
+            -webkit-text-fill-color: white;
+        }
+        
+        body .hero-content p {
+            color: white;
+            opacity: 0.95;
+        }
+        
+        body .form-container {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+        
+        body .form-label {
+            color: #1f2937;
+        }
+        
+        body .form-text {
+            color: #6b7280;
+        }
+        
+        body .form-control,
+        body .calendar-button {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            color: #1f2937;
+        }
+        
+        body .form-control:focus,
+        body .calendar-button:hover {
+            border-color: #3b82f6;
+            background: white;
+        }
+        
+        body .calendar-button-text {
+            color: #6b7280;
+        }
+        
+        body .calendar-button-text.selected {
+            color: #1f2937;
+        }
+        
+        body .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        
+        body .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+        
+        body .btn-secondary {
+            background: #f3f4f6;
+            color: #3b82f6;
+        }
+        
+        body .btn-secondary:hover {
+            background: #e5e7eb;
+            color: #2563eb;
+        }
+        
+        body .info-box {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+        
+        body .info-header h3 {
+            color: #1f2937;
+        }
+        
+        body .info-item {
+            color: #4b5563;
+        }
+        
+        body .info-item strong {
+            color: #1f2937;
+        }
+        
+        body .info-list {
+            color: #1f2937;
+        }
+        
+        body .info-list li {
+            color: #4b5563;
+        }
+        
+        body .info-list li strong {
+            color: #1f2937;
+        }
+        
+        body .info-list li::before {
+            color: #10b981;
+        }
+        
+        body .about-section {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+        
+        body .about-section h2 {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body .about-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+        
+        body .about-card:hover {
+            background: white;
+            border-color: #3b82f6;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
+        }
+        
+        body .about-card h3 {
+            color: #3b82f6;
+        }
+        
+        body .about-card p {
+            color: #6b7280;
+        }
+        
+        body .footer {
+            background: rgba(255, 255, 255, 0.95);
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        body .footer-text {
+            color: #6b7280;
+        }
+        
+        body .footer-link {
+            color: #3b82f6;
+        }
+        
+        body .footer-link:hover {
+            color: #2563eb;
+        }
+        
+        body .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        body .modal-content {
+            background: white;
+            color: #1f2937;
+        }
+        
+        .calendar-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .calendar-header button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .calendar-header button:hover {
+            background: #2563eb;
+        }
+        .calendar-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #1f2937;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .calendar-day-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 8px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: #f9fafb;
+            color: #9ca3af;
+        }
+        .calendar-day.current-month {
+            background: white;
+            color: #1f2937;
+        }
+        .calendar-day.has-data {
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: bold;
+            border-color: #3b82f6;
+        }
+        .calendar-day.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+        }
+        .calendar-day.has-data:hover {
+            background: #bfdbfe;
+            transform: scale(1.05);
+        }
+        .calendar-day.current-month:hover {
+            background: #f3f4f6;
+        }
+        .calendar-day.disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+        .selected-date-display {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f9ff;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        .calendar-legend {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 12px;
+            justify-content: center;
+            color: #6b7280;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            border: 1px solid #e5e7eb;
+        }
+        .legend-box.has-data {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+        .legend-box.no-data {
+            background: white;
+            border-color: #e5e7eb;
+        }
+        .calendar-button {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+        .calendar-button:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+        .calendar-button.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        .calendar-button-text {
+            color: #6b7280;
+        }
+        .calendar-button-text.selected {
+            color: #1f2937;
+            font-weight: 600;
+        }
+        .calendar-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .calendar-popup.active {
+            display: flex;
+        }
+        .calendar-popup-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+        .calendar-popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .calendar-popup-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0;
+        }
+        .calendar-close-btn {
+            background: #f3f4f6;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+        .calendar-close-btn:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+        
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+            color: #e2e8f0;
+        }
+        body.dark-mode .header {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom-color: #334155;
+        }
+        body.dark-mode .app-title {
+            color: #f1f5f9;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body.dark-mode .app-subtitle {
+            color: #94a3b8;
+        }
+        body.dark-mode .nav-link {
+            color: #cbd5e1;
+        }
+        body.dark-mode .nav-link:hover {
+            color: #6366f1;
+        }
+        body.dark-mode .nav-link.active {
+            color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+        body.dark-mode .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+        }
+        body.dark-mode .form-container {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #334155;
+        }
+        body.dark-mode .form-label {
+            color: #f1f5f9;
+        }
+        body.dark-mode .form-text {
+            color: #94a3b8;
+        }
+        body.dark-mode .form-control,
+        body.dark-mode .calendar-button {
+            background: #1e293b;
+            border-color: #475569;
+            color: #e2e8f0;
+        }
+        body.dark-mode .form-control:focus,
+        body.dark-mode .calendar-button:hover {
+            border-color: #6366f1;
+            background: #334155;
+        }
+        body.dark-mode .calendar-button-text {
+            color: #94a3b8;
+        }
+        body.dark-mode .calendar-button-text.selected {
+            color: #f1f5f9;
+        }
+        body.dark-mode .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+        }
+        body.dark-mode .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+        }
+        body.dark-mode .btn-secondary {
+            background: rgba(100, 116, 139, 0.2);
+            color: #6366f1;
+        }
+        body.dark-mode .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+        }
+        body.dark-mode .calendar-popup {
+            background: rgba(0, 0, 0, 0.85);
+        }
+        body.dark-mode .calendar-popup-content {
+            background: #1e293b;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        body.dark-mode .calendar-popup-title {
+            color: #f1f5f9;
+        }
+        body.dark-mode .calendar-close-btn {
+            background: #334155;
+            color: #94a3b8;
+        }
+        body.dark-mode .calendar-close-btn:hover {
+            background: #475569;
+            color: #f1f5f9;
+        }
+        body.dark-mode .calendar-container {
+            background: #334155;
+        }
+        body.dark-mode .calendar-header h3 {
+            color: #f1f5f9;
+        }
+        body.dark-mode .calendar-header button {
+            background: #6366f1;
+        }
+        body.dark-mode .calendar-header button:hover {
+            background: #4f46e5;
+        }
+        body.dark-mode .calendar-day {
+            background: #475569;
+            color: #64748b;
+            border-color: #334155;
+        }
+        body.dark-mode .calendar-day.current-month {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+        body.dark-mode .calendar-day.has-data {
+            background: #1e40af;
+            color: #dbeafe;
+            border-color: #3b82f6;
+        }
+        body.dark-mode .calendar-day.has-data:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+        body.dark-mode .calendar-day.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+        }
+        body.dark-mode .calendar-day.current-month:hover:not(.has-data) {
+            background: #334155;
+        }
+        body.dark-mode .calendar-legend span {
+            color: #cbd5e1;
+        }
+        body.dark-mode .legend-box.has-data {
+            background: #1e40af;
+            border-color: #3b82f6;
+        }
+        body.dark-mode .legend-box.no-data {
+            background: #1e293b;
+            border-color: #475569;
+        }
+        body.dark-mode .info-box {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #334155;
+        }
+        body.dark-mode .info-header h3 {
+            color: #f1f5f9;
+        }
+        body.dark-mode .info-item strong {
+            color: #cbd5e1;
+        }
+        body.dark-mode .info-item {
+            color: #94a3b8;
+        }
+        body.dark-mode .info-list {
+            color: #e2e8f0;
+        }
+        body.dark-mode .info-list li {
+            color: #cbd5e1;
+        }
+        body.dark-mode .info-list li strong {
+            color: #f1f5f9;
+        }
+        body.dark-mode .info-list li::before {
+            color: #10b981;
+        }
+        body.dark-mode .about-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #334155;
+        }
+        body.dark-mode .about-section h2 {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body.dark-mode .about-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: #475569;
+        }
+        body.dark-mode .about-card:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #6366f1;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+        }
+        body.dark-mode .about-card h3 {
+            color: #818cf8;
+        }
+        body.dark-mode .about-card p {
+            color: #cbd5e1;
+        }
+        body.dark-mode .card-icon {
+            filter: brightness(1.2);
+        }
+        body.dark-mode .footer {
+            background: rgba(15, 23, 42, 0.95);
+            border-top-color: #334155;
+        }
+        body.dark-mode .footer-text {
+            color: #94a3b8;
+        }
+        body.dark-mode .footer-link {
+            color: #6366f1;
+        }
+        body.dark-mode .footer-link:hover {
+            color: #818cf8;
+        }
+        body.dark-mode .modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        body.dark-mode .modal-content {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+        body.dark-mode .spinner {
+            border-color: rgba(99, 102, 241, 0.2);
+            border-top-color: #6366f1;
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: #e5e7eb;
+            border: 2px solid #d1d5db;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .theme-toggle:hover {
+            background: #d1d5db;
+            transform: rotate(180deg) scale(1.1);
+            border-color: #9ca3af;
+        }
+        body.dark-mode .theme-toggle {
+            background: #334155;
+            border-color: #475569;
+        }
+        body.dark-mode .theme-toggle:hover {
+            background: #475569;
+            border-color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo" class="logo" onerror="this.style.display='none'">
+                <div class="title-group">
+                    <h1 class="app-title">silesiaAIR</h1>
+                    <p class="app-subtitle">Wizualizacja danych geoprzestrzennych dla GZM</p>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-link active">Start</a>
+                <a href="#o-aplikacji" class="nav-link">O aplikacji</a>
+                <button id="themeToggle" class="theme-toggle" title="Przełącz motyw">
+                    <span id="themeIcon">🌙</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Analiza i Wizualizacja Danych</h2>
+                <p>Wybierz datę, zmienną i metodę wizualizacji aby wygenerować wykresy i mapy</p>
+            </div>
+        </section>
+
+        <!-- Form Section -->
+        <section class="form-section">
+            <div class="form-container">
+                <form id="visualizationForm" method="POST" action="{{ url_for('generuj') }}" class="form">
+                    <div class="form-grid">
+                        <!-- Date Input -->
+                        <div class="form-group">
+                            <label for="data" class="form-label">
+                                <span class="label-icon">📅</span>
+                                Data pomiaru
+                            </label>
+                            <input type="hidden" id="data" name="data" required>
+                            <button type="button" id="datePickerBtn" class="calendar-button">
+                                <span class="calendar-button-text" id="datePickerText">Wybierz datę...</span>
+                                <span>📅</span>
+                            </button>
+                            <small class="form-text">Kliknij aby wybrać datę z kalendarza</small>
+                        </div>
+
+                        <!-- Calendar Popup Modal -->
+                        <div id="calendarPopup" class="calendar-popup">
+                            <div class="calendar-popup-content">
+                                <div class="calendar-popup-header">
+                                    <h3 class="calendar-popup-title">Wybierz datę</h3>
+                                    <button type="button" id="closeCalendar" class="calendar-close-btn">&times;</button>
+                                </div>
+                                <div class="calendar-container">
+                                    <div class="calendar-header">
+                                        <button type="button" id="prevMonth">&laquo; Poprzedni</button>
+                                        <h3 id="currentMonth"></h3>
+                                        <button type="button" id="nextMonth">Następny &raquo;</button>
+                                    </div>
+                                    <div class="calendar-grid" id="calendarGrid"></div>
+                                    <div class="calendar-legend">
+                                        <div class="legend-item">
+                                            <div class="legend-box has-data"></div>
+                                            <span>Dostępne dane</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-box no-data"></div>
+                                            <span>Brak danych</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Variable Selection -->
+                        <div class="form-group">
+                            <label for="zmienna" class="form-label">
+                                <span class="label-icon">📊</span>
+                                Zmienna
+                            </label>
+                            <select id="zmienna" name="zmienna" class="form-control" required>
+                                <option value="pm25">PM2.5 – Cząsteczki drobne</option>
+                                <option value="temp">Temperatura</option>
+                                <option value="hum">Wilgotność</option>
+                            </select>
+                            <small class="form-text">Wybierz zmienną do analizy</small>
+                        </div>
+
+                        <!-- Visualization Method -->
+                        <div class="form-group">
+                            <label for="metoda" class="form-label">
+                                <span class="label-icon">🎨</span>
+                                Metoda wizualizacji
+                            </label>
+                            <select id="metoda" name="metoda" class="form-control" required>
+                                <option value="mapa">Mapa punktów</option>
+                                <option value="idw">Interpolacja IDW</option>
+                                <option value="kriging">Kriging</option>
+                                <option value="wykres">Wykresy statystyczne</option>
+                            </select>
+                            <small class="form-text">Wybierz metodę wizualizacji</small>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <span class="btn-icon">🚀</span>
+                            Generuj wizualizację
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-lg" onclick="exportData()">
+                            <span class="btn-icon">💾</span>
+                            Eksportuj dane
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Information Box -->
+                <div class="info-box">
+                    <div class="info-header">
+                        <span class="info-icon">ℹ️</span>
+                        <h3>Dostępne metody wizualizacji</h3>
+                    </div>
+                    <ul class="info-list">
+                        <li><strong>Mapa punktów:</strong> Wyświetla punkty pomiarowe na mapie z kolorowaniem według wartości zmiennej</li>
+                        <li><strong>Interpolacja IDW:</strong> Metodą Inverse Distance Weighting interpoluje wartości między punktami pomiarowymi</li>
+                        <li><strong>Kriging:</strong> Zaawansowana metoda geostatystyczna do interpolacji przestrzennej</li>
+                        <li><strong>Wykresy statystyczne:</strong> Wyświetla rozkład danych w postaci słupków, linii i pudełek</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about-section" id="o-aplikacji">
+            <div class="about-container">
+                <h2>O aplikacji</h2>
+                <div class="about-content">
+                    <div class="about-card">
+                        <div class="card-icon">🗺️</div>
+                        <h3>Analiza Geoprzestrzenna</h3>
+                        <p>Zaawansowane narzędzie do analizy i wizualizacji danych geoprzestrzennych z wykorzystaniem bibliotek Python takich jak GeoPandas i Shapely.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="card-icon">📈</div>
+                        <h3>Wiele Metod Wizualizacji</h3>
+                        <p>Wybieraj spośród wielu dostępnych metod wizualizacji, od prostych map punktów do zaawansowanej interpolacji geostatystycznej.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="card-icon">⚡</div>
+                        <h3>Szybka i Responsywna</h3>
+                        <p>Nowoczesny interfejs zaprojektowany z myślą o użytkowniku. Intuicyjna obsługa na komputerach i urządzeniach mobilnych.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 silesiaAIR. Wizualizacja Danych Geoprzestrzennych dla GZM.</p>
+        </div>
+    </footer>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <div class="spinner"></div>
+            <p>Generowanie wizualizacji...</p>
+        </div>
+    </div>
+
+    <script>
+        // Available dates with data
+        const availableDates = [
+            {% for date in dates %}
+            "{{ date }}"{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        let currentDate = new Date();
+        let selectedDate = null;
+
+        const monthNames = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
+            "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
+        
+        const dayNames = ["Pn", "Wt", "Śr", "Cz", "Pt", "Sb", "Nd"];
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.textContent = '☀️';
+        }
+        
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Calendar popup controls
+        const calendarPopup = document.getElementById('calendarPopup');
+        const datePickerBtn = document.getElementById('datePickerBtn');
+        const datePickerText = document.getElementById('datePickerText');
+        const closeCalendarBtn = document.getElementById('closeCalendar');
+
+        // Open calendar popup
+        datePickerBtn.addEventListener('click', function() {
+            calendarPopup.classList.add('active');
+            datePickerBtn.classList.add('active');
+        });
+
+        // Close calendar popup
+        function closeCalendar() {
+            calendarPopup.classList.remove('active');
+            datePickerBtn.classList.remove('active');
+        }
+
+        closeCalendarBtn.addEventListener('click', closeCalendar);
+
+        // Close on backdrop click
+        calendarPopup.addEventListener('click', function(e) {
+            if (e.target === calendarPopup) {
+                closeCalendar();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && calendarPopup.classList.contains('active')) {
+                closeCalendar();
+            }
+        });
+
+        function renderCalendar(year, month) {
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const prevLastDay = new Date(year, month, 0);
+            
+            // Adjust for Monday as first day (0 = Sunday, we want 1 = Monday)
+            let firstDayOfWeek = firstDay.getDay();
+            firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+            
+            const daysInMonth = lastDay.getDate();
+            const prevMonthDays = prevLastDay.getDate();
+            
+            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Previous month days
+            for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+                const day = prevMonthDays - i;
+                const dayEl = createDayElement(year, month - 1, day, false);
+                calendarGrid.appendChild(dayEl);
+            }
+            
+            // Current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = createDayElement(year, month, day, true);
+                calendarGrid.appendChild(dayEl);
+            }
+            
+            // Next month days to fill the grid
+            const totalCells = calendarGrid.children.length - 7; // excluding headers
+            const remainingCells = (Math.ceil(totalCells / 7) * 7) - totalCells;
+            
+            for (let day = 1; day <= remainingCells; day++) {
+                const dayEl = createDayElement(year, month + 1, day, false);
+                calendarGrid.appendChild(dayEl);
+            }
+        }
+
+        function createDayElement(year, month, day, isCurrentMonth) {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day';
+            dayEl.textContent = day;
+            
+            if (isCurrentMonth) {
+                dayEl.classList.add('current-month');
+            }
+            
+            // Format date as YYYY-MM-DD
+            const dateStr = formatDate(year, month, day);
+            
+            // Check if date has data
+            if (availableDates.includes(dateStr)) {
+                dayEl.classList.add('has-data');
+                dayEl.addEventListener('click', () => selectDate(dateStr, dayEl));
+            } else if (isCurrentMonth) {
+                dayEl.classList.add('disabled');
+            }
+            
+            // Check if this is the selected date
+            if (selectedDate === dateStr) {
+                dayEl.classList.add('selected');
+            }
+            
+            return dayEl;
+        }
+
+        function formatDate(year, month, day) {
+            const m = month + 1;
+            const d = day;
+            return `${year}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        }
+
+        function selectDate(dateStr, dayEl) {
+            selectedDate = dateStr;
+            document.getElementById('data').value = dateStr;
+            
+            // Update button text
+            datePickerText.textContent = dateStr;
+            datePickerText.classList.add('selected');
+            
+            // Update visual selection in calendar
+            document.querySelectorAll('.calendar-day').forEach(el => {
+                el.classList.remove('selected');
+            });
+            dayEl.classList.add('selected');
+            
+            // Close popup after selection
+            closeCalendar();
+        }
+
+        function changeMonth(offset) {
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        }
+
+        // Initialize calendar
+        renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+
+        // Event listeners for month navigation
+        document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
+        document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
+
+        // Form submission with loading indicator
+        document.getElementById('visualizationForm').addEventListener('submit', function(e) {
+            document.getElementById('loadingModal').style.display = 'flex';
+        });
+
+        // Export data function
+        function exportData() {
+            const zmienna = document.getElementById('zmienna').value;
+            
+            const formData = new FormData();
+            formData.append('zmienna', zmienna);
+
+            document.getElementById('loadingModal').style.display = 'flex';
+
+            fetch('{{ url_for("eksportuj") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingModal').style.display = 'none';
+                if (data.status === 'success') {
+                    alert('✅ ' + data.message);
+                    // Optional: Open download
+                    if (data.download_url) {
+                        window.open(data.download_url, '_blank');
+                    }
+                } else {
+                    alert('❌ Błąd: ' + data.message);
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingModal').style.display = 'none';
+                alert('❌ Błąd komunikacji: ' + error);
+            });
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
